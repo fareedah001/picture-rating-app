@@ -33,13 +33,10 @@ export default function Home() {
               helps us improve!"
             </Text>
           </Container>
-          <Flex align="center" justify="center" gap={40}>
-            <Button bg="#008625" c="#fff" w="200%" h={30}>
-              Indoor
-            </Button>
-            <Button bg="#008625" c="#fff" w="250%" h={30}>
-              Outdoor
-            </Button>
+          <Flex align="center" justify="center" gap={10}>
+            {new Array(10).fill(0).map((d) => (
+              <IconStar stroke={2} color="#C4C4C4" />
+            ))}
           </Flex>
 
           <Container size={400} w="100%">
