@@ -13,9 +13,11 @@ import {
   Checkbox,
   Radio,
   Group,
+  LoadingOverlay,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
+import useNotification from "@/lib/hooks/useNotification";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +25,9 @@ export default function Home() {
   const [value, setValue] = useState("");
   const [photo, setPhoto] = useState("");
   const [photoId, setPhotoId] = useState();
-  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const { handleError, handleSuccess, handleInfo } = useNotification();
 
   const fetchImage = async () => {
     try {
@@ -31,7 +35,6 @@ export default function Home() {
         "http://47.236.63.61:4050/image",
         {}
       );
-      console.log(res);
       setPhoto(res.image.url);
       setPhotoId(res.image.id);
     } catch (error) {}
@@ -39,23 +42,27 @@ export default function Home() {
 
   const handleSubmit = async () => {
     if (value.length < 1) {
-      alert("Select a type to proceed");
+      handleInfo("No input", "Select a type to proceed");
       return;
     }
 
-    setLoading(true);
+    setDisable(true);
+    setVisible(true);
     try {
-      console.log(value);
       const { data: res } = await axios.patch(
         `http://47.236.63.61:4050/image/${photoId}`,
         { type: value }
       );
+      handleSuccess("Succesfully Submitted", "Image has been Updated");
       setValue("");
       fetchImage();
     } catch (error) {
-      console.log(error);
+      if (isAxiosError(error))
+        return handleError("Login failed", error.response?.data.message);
+      return handleError("Error", "An error occurred");
     } finally {
-      setLoading(false);
+      setDisable(false);
+      setVisible(false);
     }
   };
 
@@ -73,7 +80,13 @@ export default function Home() {
           direction="column"
           gap={20}
         >
-          <Box>
+          <Box w={"400px"} h={"400px"} pos={"relative"}>
+            <LoadingOverlay
+              w={"100%"}
+              visible={visible}
+              zIndex={1000}
+              overlayProps={{ radius: "sm", blur: 2 }}
+            />
             <Image radius="md" src={photo} w={"100%"} h={"100%"} alt="image" />
           </Box>
 
@@ -98,7 +111,7 @@ export default function Home() {
               w="100%"
               h={50}
               onClick={handleSubmit}
-              loading={loading}
+              disabled={disable}
             >
               Submit
             </Button>
