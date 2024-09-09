@@ -40,11 +40,37 @@ export default function Home() {
     } catch (error) {}
   };
 
-  const handleSubmit = async () => {
-    if (value.length < 1) {
-      handleInfo("No input", "Select a type to proceed");
-      return;
-    }
+  // const handleSubmit = async () => {
+  //   if (value.length < 1) {
+  //     handleInfo("No input", "Select a type to proceed");
+  //     return;
+  //   }
+
+  //   setDisable(true);
+  //   setVisible(true);
+  //   try {
+  //     const { data: res } = await axios.patch(
+  //       `http://47.236.63.61:4050/image/${photoId}`,
+  //       { type: value }
+  //     );
+  //     handleSuccess("Succesfully Submitted", "You have selected indoor");
+  //     setValue("");
+  //     fetchImage();
+  //   } catch (error) {
+  //     if (isAxiosError(error))
+  //       return handleError("Error", error.response?.data.message);
+  //     return handleError("Error", "An error occurred");
+  //   } finally {
+  //     setDisable(false);
+  //     setVisible(false);
+  //   }
+  // };
+
+  const handleIndoorSubmit = async () => {
+    // if (value.length < 1) {
+    //   handleInfo("No input", "Select a type to proceed");
+    //   return;
+    // }
 
     setDisable(true);
     setVisible(true);
@@ -53,12 +79,38 @@ export default function Home() {
         `http://47.236.63.61:4050/image/${photoId}`,
         { type: value }
       );
-      handleSuccess("Succesfully Submitted", "Image has been Updated");
+      handleSuccess("Succesfully Submitted", "Indoor Image");
       setValue("");
       fetchImage();
     } catch (error) {
       if (isAxiosError(error))
-        return handleError("Login failed", error.response?.data.message);
+        return handleError("Error", error.response?.data.message);
+      return handleError("Error", "An error occurred");
+    } finally {
+      setDisable(false);
+      setVisible(false);
+    }
+  };
+
+  const handleOutdoorSubmit = async () => {
+    // if (value.length < 1) {
+    //   handleInfo("No input", "Select a type to proceed");
+    //   return;
+    // }
+
+    setDisable(true);
+    setVisible(true);
+    try {
+      const { data: res } = await axios.patch(
+        `http://47.236.63.61:4050/image/${photoId}`,
+        { type: value }
+      );
+      handleSuccess("Succesfully Submitted", "Outdoor Image");
+      setValue("");
+      fetchImage();
+    } catch (error) {
+      if (isAxiosError(error))
+        return handleError("Error", error.response?.data.message);
       return handleError("Error", "An error occurred");
     } finally {
       setDisable(false);
@@ -96,14 +148,34 @@ export default function Home() {
               helps us improve!
             </Text>
           </Container>
-          <Radio.Group name="selectType" value={value} onChange={setValue}>
+          <Group>
+            <Button
+              onClick={handleIndoorSubmit}
+              radius={"sm"}
+              color="red"
+              value="indoor"
+              disabled={disable}
+            >
+              Indoor
+            </Button>
+            <Button
+              onClick={handleOutdoorSubmit}
+              radius={"sm"}
+              color="green"
+              value="outdoor"
+              disabled={disable}
+            >
+              Outdoor
+            </Button>
+          </Group>
+          {/* <Radio.Group name="selectType" value={value} onChange={setValue}>
             <Group mt="xs">
               <Radio value="indoor" label="Indoor" />
               <Radio value="outdoor" label="Outdoor" />
             </Group>
-          </Radio.Group>
+          </Radio.Group> */}
 
-          <Container size={400} w="100%">
+          {/* <Container size={400} w="100%">
             <Button
               bg="#008625"
               c="#fff"
@@ -115,7 +187,7 @@ export default function Home() {
             >
               Submit
             </Button>
-          </Container>
+          </Container> */}
         </Flex>
       </Container>
     </>
